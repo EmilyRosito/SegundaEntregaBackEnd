@@ -1,4 +1,4 @@
-import express from 'express';
+mport express from 'express';
 import productosRutas from './routes/productos.routes.js';
 import carritoRutas from './routes/carrito.routes.js';
 
