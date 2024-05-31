@@ -1,90 +1,103 @@
-import { Router } from "express";
-import fs from "fs"
+import { Router } from 'express';
+import fs from 'fs';
 
 const router = Router();
 
-const products = JSON.parse(fs.readFileSync('./data/products.json', 'utf-8'));
-
-// La ruta raíz get deberá listar todos los productos de la base de datos.
-router.get('/', (req, res) => {
-    res.json(products);
-})
-
-// La ruta GET /:pid deberá traer sólo el producto con el id proporcionado
-router.get('/:pid', async (req, res) => {
-    const { pid } = req.params;
-    const product = await products.find(product => product.id == pid);
-
-    if(!product) {
-        res.status(404).json({ error: 'No se encuentra el producto con el id solicitado' })
-    } else {
-        res.json(product);
+const leerInfo = (path) => {
+    try {
+        return JSON.parse(fs.readFileSync(path, 'utf-8'));
+    } catch (err) {
+        console.error(`Error al leer el archivo: ${path}`, err);
+        return [];
     }
-})
+};
 
-// La ruta raíz POST / deberá agregar un nuevo producto a la base de datos.
+const escribirInfo = (path, data) => {
+    try {
+        fs.writeFileSync(path, JSON.stringify(data, null, '\t'));
+    } catch (err) {
+        console.error(`Error al escribir el archivo: ${path}`, err);
+    }
+};
+
+let productosInfo = leerInfo('./info/productos.json');
+
+router.get('/', (req, res) => {
+    res.json(productosInfo);
+});
+
+router.get('/:pid', (req, res) => {
+    const { pid } = req.params;
+    const producto = productosInfo.find(producto => producto.id == pid);
+
+    if (!producto) {
+        res.status(404).json({ error: 'No se encuentra el producto con el id solicitado' });
+    } else {
+        res.json(producto);
+    }
+});
+
 router.post('/', (req, res) => {
     const { title, description, code, price, stock, category } = req.body;
-    const newId = products[products.length - 1].id + 1;
+    let newId = productosInfo.length ? productosInfo[productosInfo.length - 1].id + 1 : 1;
 
-    if(!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios' })
-    } else {
-            const newProduct = {
-                id: newId,
-                title,
-                description,
-                code,
-                price,
-                status: true,
-                stock,
-                category
-            }
+    if (!title || !description || !code || typeof price !== 'number' || typeof stock !== 'number' || !category) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios y deben ser del tipo correcto' });
+    }
 
-            products.push(newProduct);
-            fs.writeFileSync('./data/products.json', JSON.stringify(products, null, '\t'));
-        }
-        res.json(products); 
-} 
-)
-// La ruta PUT /:pid deberá tomar un producto y actualizarlo por los campos enviados desde body. NUNCA se debe actualizar o eliminar el id al momento de hacer dicha actualización.
+    let nuevoProducto = {
+        id: newId,
+        title,
+        description,
+        code,
+        price,
+        status: true,
+        stock,
+        category
+    };
+
+    productosInfo.push(nuevoProducto);
+    escribirInfo('./info/productos.json', productosInfo);
+    res.json(productosInfo);
+});
+
 router.put('/:pid', (req, res) => {
     const { pid } = req.params;
     const { title, description, code, price, stock, category } = req.body;
 
-    if(!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios' })
-    } else {
-        const product = products.find(product => product.id == pid);
+    if (!title || !description || !code || typeof price !== 'number' || typeof stock !== 'number' || !category) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios y deben ser del tipo correcto' });
+    }
 
-        if(!product) {
-            res.status(404).json({ error: 'No se encuentra el producto con el id solicitado' })
-        } else {
-            product.title = title;
-            product.description = description;
-            product.code = code;
-            product.price = price;
-            product.stock = stock;
-            product.category = category;
-            fs.writeFileSync('./data/products.json', JSON.stringify(products, null, '\t'));
-            res.json(product);
-        }
-    }
-})
-// La ruta DELETE /:pid deberá eliminar el producto con el pid indicado.
-router.delete('/:pid', async (req, res) => {
-    const { pid } = req.params;
-    const productIndex = products.findIndex(product => product.id == pid)
-    
-    if (pid > products[products.length - 1].id) {
-        res.status(400).json(`No se encuentra el producto con el id: ${pid} solicitado`);
+    let producto = productosInfo.find(producto => producto.id == pid);
+
+    if (!producto) {
+        res.status(404).json({ error: 'No se encuentra el producto con el id pedido' });
     } else {
-        try{
-            const product = await products.splice(productIndex, 1)
-            res.json(product);
-        } catch(err) {
-            res.status(400).json(`Ocurrió un error al realizar la petición: ${err}`);
-        };
+        producto.title = title;
+        producto.description = description;
+        producto.code = code;
+        producto.price = price;
+        producto.stock = stock;
+        producto.category = category;
+
+        escribirInfo('./info/productos.json', productosInfo);
+        res.json(producto);
     }
-})
-export default router
+});
+
+
+router.delete('/:pid', (req, res) => {
+    const { pid } = req.params;
+    let productoIndex = productosInfo.findIndex(producto => producto.id == pid);
+
+    if (productoIndex === -1) {
+        res.status(400).json(`No se encuentra el producto con el id: ${pid} pedido`);
+    } else {
+        let [productoEliminado] = productosInfo.splice(productoIndex, 1);
+        escribirInfo('./info/productos.json', productosInfo);
+        res.json(productoEliminado);
+    }
+});
+
+export default router;

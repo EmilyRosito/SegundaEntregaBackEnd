@@ -1,17 +1,16 @@
-import Express from "express"
-import productsRoutes from "./routes/products.routes.js"
-import cartRoutes from "./routes/carts.routes.js"
+import express from 'express';
+import productosRutas from './routes/productos.routes.js';
+import carritoRutas from './routes/carrito.routes.js';
 
-const app = Express();
+const app = express();
+const PUERTO = process.env.PORT || 8080;
 
-const PORT = 8080;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: true }));
+app.use('/api/productos', productosRutas);
+app.use('/api/carrito', carritoRutas);
 
-app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto http://localhost:${PORT}`)
-})
-
-app.use('/api/products', productsRoutes);
-app.use('/api/carts', cartRoutes);
+app.listen(PUERTO, () => {
+    console.log(`Servidor ejecutándose en http://localhost:${PUERTO}`);
+});

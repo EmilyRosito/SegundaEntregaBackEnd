@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "title": "Producto Uno",
+        "description": "Un producto simple uno",
+        "code": "B1",
+        "price": 150,
+        "status": true,
+        "stock": 10,
+        "category": "Electrónica"
+    },
+    {
+        "id": 2,
+        "title": "Producto Dos",
+        "description": "Un producto simple dos",
+        "code": "B2",
+        "price": 200,
+        "status": true,
+        "stock": 20,
+        "category": "Hogar"
+    },
+    {
+        "id": 3,
+        "title": "Producto Tres",
+        "description": "Un producto simple tres",
+        "code": "B3",
+        "price": 250,
+        "status": true,
+        "stock": 30,
+        "category": "Oficina"
+    },
+    {
+        "id": 4,
+        "title": "Producto Cuatro",
+        "description": "Un producto simple cuatro",
+        "code": "B4",
+        "price": 300,
+        "status": true,
+        "stock": 40,
+        "category": "Jardín"
+    },
+    {
+        "id": 5,
+        "title": "Producto Cinco",
+        "description": "Un producto simple cinco",
+        "code": "B5",
+        "price": 350,
+        "status": true,
+        "stock": 50,
+        "category": "Deportes"
+    }
+]
