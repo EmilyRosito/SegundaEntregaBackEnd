@@ -13,11 +13,11 @@ const leerInfo = (path) => {
 };
 
 const escribirInfo = (path, data) => {
-    try {
-        fs.writeFileSync(path, JSON.stringify(data, null, '\t'));
-    } catch (err) {
-        console.error(`Error al escribir el archivo: ${path}`, err);
-    }
+    fs.writeFile(path, JSON.stringify(data, null, '\t'), (err) => {
+        if (err) {
+            console.error(`Error al escribir el archivo: ${path}`, err);
+        }
+    });
 };
 
 let productosInfo = leerInfo('./info/productos.json');
@@ -60,11 +60,11 @@ router.post('/:cid/producto/:pid', (req, res) => {
     } else if (!producto) {
         res.status(400).json(`No se encuentra el producto con el id: ${pid}, pide uno entre el 1 y el ${productosInfo.length}`);
     } else {
-        const productoExistente = carrito.products.find(p => p.product === productoId);
+        const productoExistente = carrito.productos.find(p => p.producto === productoId);
         if (productoExistente) {
             productoExistente.quantity += 1;
         } else {
-            carrito.producto.push({ producto: productoId, quantity: 1 });
+            carrito.productos.push({ producto: productoId, quantity: 1 });
         }
 
         escribirInfo('./info/carrito.json', carritosInfo);

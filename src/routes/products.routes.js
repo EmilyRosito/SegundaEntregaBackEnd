@@ -13,11 +13,11 @@ const leerInfo = (path) => {
 };
 
 const escribirInfo = (path, data) => {
-    try {
-        fs.writeFileSync(path, JSON.stringify(data, null, '\t'));
-    } catch (err) {
-        console.error(`Error al escribir el archivo: ${path}`, err);
-    }
+    fs.writeFile(path, JSON.stringify(data, null, '\t'), (err) => {
+        if (err) {
+            console.error(`Error al escribir el archivo: ${path}`, err);
+        }
+    });
 };
 
 let productosInfo = leerInfo('./info/productos.json');
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
 
 router.get('/:pid', (req, res) => {
     const { pid } = req.params;
-    const producto = productosInfo.find(producto => producto.id == pid);
+    const producto = productosInfo.find(producto => producto.id === parseInt(pid, 10));
 
     if (!producto) {
         res.status(404).json({ error: 'No se encuentra el producto con el id solicitado' });
@@ -69,30 +69,32 @@ router.put('/:pid', (req, res) => {
         return res.status(400).json({ error: 'Todos los campos son obligatorios y deben ser del tipo correcto' });
     }
 
-    let producto = productosInfo.find(producto => producto.id == pid);
+    let productoIndex = productosInfo.findIndex(producto => producto.id === parseInt(pid, 10));
 
-    if (!producto) {
-        res.status(404).json({ error: 'No se encuentra el producto con el id pedido' });
+    if (productoIndex === -1) {
+        res.status(404).json({ error: 'No se encuentra el producto con el id solicitado' });
     } else {
-        producto.title = title;
-        producto.description = description;
-        producto.code = code;
-        producto.price = price;
-        producto.stock = stock;
-        producto.category = category;
+        productosInfo[productoIndex] = {
+            id: parseInt(pid, 10),
+            title,
+            description,
+            code,
+            price,
+            stock,
+            category
+        };
 
         escribirInfo('./info/productos.json', productosInfo);
-        res.json(producto);
+        res.json(productosInfo[productoIndex]);
     }
 });
 
-
 router.delete('/:pid', (req, res) => {
     const { pid } = req.params;
-    let productoIndex = productosInfo.findIndex(producto => producto.id == pid);
+    let productoIndex = productosInfo.findIndex(producto => producto.id === parseInt(pid, 10));
 
     if (productoIndex === -1) {
-        res.status(400).json(`No se encuentra el producto con el id: ${pid} pedido`);
+        res.status(404).json(`No se encuentra el producto con el id: ${pid} solicitado`);
     } else {
         let [productoEliminado] = productosInfo.splice(productoIndex, 1);
         escribirInfo('./info/productos.json', productosInfo);

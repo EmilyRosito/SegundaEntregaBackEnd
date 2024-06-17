@@ -8,11 +8,20 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js"
   },
-  "keywords": ["delivery", "express", "nodejs"],
+  "keywords": [
+    "delivery",
+    "express",
+    "nodejs"
+  ],
   "author": "Your Name",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "cookie-parser": "^1.4.6",
+    "expres": "^0.0.5",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.2",
+    "muter": "^0.7.0",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
