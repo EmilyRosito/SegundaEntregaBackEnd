@@ -2,25 +2,25 @@
 const socket = io();
 
 
-function renderProducts(data) {
-  const productsList = document.getElementById("products_list");
-  productsList.innerHTML = "";
+function renderProductos(info) {
+  const productosLista = document.getElementById("productos_lista");
+  productosLista.innerHTML = "";
 
-  data.forEach(product => {
-    const productDiv = createProductDiv(product);
-    productsList.appendChild(productDiv);
+  info.forEach(producto => {
+    const productoDiv = createProductoDiv(producto);
+    productosLista.appendChild(productoDiv);
   });
 }
 
 
-function createProductDiv(product) {
+function createProductoDiv(producto) {
   const div = document.createElement("div");
   div.innerHTML = `
-    <h3>${product.title}</h3>
-    <p>${product.price}</p>
-    <p>${product.description}</p>
+    <h3>${producto.title}</h3>
+    <p>${producto.price}</p>
+    <p>${producto.description}</p>
   `;
   return div;
 }
 
-socket.on("getProducts", renderProducts);
+socket.on("getProductos", renderProductos);

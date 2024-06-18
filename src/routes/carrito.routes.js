@@ -12,8 +12,8 @@ const leerInfo = (path) => {
     }
 };
 
-const escribirInfo = (path, data) => {
-    fs.writeFile(path, JSON.stringify(data, null, '\t'), (err) => {
+const escribirInfo = (path, info) => {
+    fs.writeFile(path, JSON.stringify(info, null, '\t'), (err) => {
         if (err) {
             console.error(`Error al escribir el archivo: ${path}`, err);
         }

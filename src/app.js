@@ -36,7 +36,7 @@ app.use('/', viewsRoutes);
 io.on('connection', (socket) => {
   console.log(`Cliente conectado: ${socket.id}`);
 
-  socket.emit('getProducts', products);
+  socket.emit('getProducts', productos);
 
   socket.on('disconnect', () => {
     console.log(`Cliente desconectado: ${socket.id}`);
@@ -44,18 +44,18 @@ io.on('connection', (socket) => {
 });
 
 
-let products = [];
-const loadProducts = async () => {
+let productos = [];
+const loadProductos = async () => {
   try {
-    const data = await fs.readFile(path.resolve(__dirname, '../data/products.json'), 'utf-8');
-    products = JSON.parse(data);
+    const info = await fs.readFile(path.resolve(__dirname, '../info/productos.json'), 'utf-8');
+    productos = JSON.parse(info);
   } catch (error) {
-    console.error('Error loading products:', error);
-    products = []; 
+    console.error('Error loading productos:', error);
+    productos = []; 
   }
 };
 
-loadProducts().catch(err => console.error('Failed to load products:', err));
+loadProductos().catch(err => console.error('Failed to load products:', err));
 
 
 app.use('/api/productos', productosRutas);

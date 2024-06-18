@@ -2,26 +2,26 @@ import { Router } from "express";
 import fs from "fs";
 
 const router = Router();
-let products = [];
+let productos = [];
 
-const loadProducts = async () => {
+const loadProductos = async () => {
   try {
-    const data = await fs.promises.readFile("./info/productos.json", "utf-8");
-    products = JSON.parse(data);
+    const info = await fs.promises.readFile("./info/productos.json", "utf-8");
+    productos = JSON.parse(info);
   } catch (error) {
     console.error("Error loading products:", error);
-    products = []; 
+    productos = []; 
   }
 };
 
-loadProducts().catch(err => console.error("Failed to load products:", err));
+loadProductos().catch(err => console.error("Failed to load products:", err));
 
 router.get("/", (req, res) => {
-  res.render("home", { products });
+  res.render("home", { productos });
 });
 
 router.get("/realTimeProducts", (req, res) => {
-  res.render("realTimeProducts", { products });
+  res.render("realTimeProducts", { productos });
 });
 
 export default router;
